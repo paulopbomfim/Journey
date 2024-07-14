@@ -1,0 +1,31 @@
+﻿x-env: &env
+  environment:
+    -ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT:-Development}
+    -ASPNETCORE_HTTP_PORTS=80
+
+services:
+  journey.api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: src/Journey.Api/Dockerfile
+      <<: *env
+      ports:
+        - 5235:80
+      network: 
+        - journey
+
+  journey.database:
+    image: postgres:16.2-alpine3.19
+    container_name: database
+    ports:
+      - 5432:5432
+    volumes:
+      - db_data:/var/lib/postgres
+    networks:
+      - journey
+    
+  
+networks:
+  journey:  
+    driver: bridge
